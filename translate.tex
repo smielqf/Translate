@@ -494,17 +494,17 @@
       \end{aligned}
     \end{equation*}
 
-    对理论家来说，上述的公式属于一阶逻辑({\itshape first-order logic})的领域。这些公式消除了英文表达这些性质所带来的歧义干扰（当然我们假设的$H, app,$etc 也是用英文定义的）。例如，“最终一定”写成$\exists{t'}>t$，其中$t'$没有边界（除了禁止灯等式$t' \neq t!$以外）。同样，我们没有强制说服务时间点$t_serv$等价于楼层穿越时间点$t_{trav}$：前者是实现的责任，后者是行为的假设。
+    对理论家来说，上述的公式属于一阶逻辑({\itshape first-order logic})的领域。这些公式消除了英文表达这些性质所带来的歧义干扰（当然我们假设的$H, app,$etc 也是用英文定义的）。例如，“最终一定”写成$\exists{t'}>t$，其中$t'$没有边界（除了禁止等式$t' \neq t!$以外）。同样，我们没有强制说服务时间点$t_serv$等价于楼层穿越时间点$t_{trav}$：前者是实现的责任，后者是行为的假设。
 
-    上述用的庞大概念相当的复杂冗长，一个很明显的缺点。而是时序逻辑({\itshape Temporal logic})是一种不同且适合这种情形的形式化方法。
+    上述用的庞大概念相当的复杂冗长，一个很明显的缺点。而时序逻辑({\itshape Temporal logic})是一种不同且适合这种情形的形式化方法。
 
-    时序逻辑({\itshape Temporal Logic})一种专为statements(描述)而定的逻辑并用来推理一些包含时间顺序的概念的东西。A.Pnueli在1977那年首次用它来为系统的行为性质下正式的定义。 与上面缩写的数学公式相比， 时序逻辑概念更清晰和简单。例如参数$t$完全地消失了。时序逻辑还提供了即用的概念。它的运算符模拟语言结构（副词“总是”、“直到”、动词的时态等等），造成了自然语言描述和时序逻辑形式化非常地接近。最后，时序逻辑提出了一个正式的语义（{\itshape formal semantics}），一种不可缺少地语言规范工具。
+    时序逻辑({\itshape Temporal Logic})一种专为statements(描述)而定的逻辑并用来推理一些包含时间顺序的概念的东西。A.Pnueli在1977那年首次用它来为系统的行为性质下正式的定义。 与上面所写的数学公式相比， 时序逻辑概念更清晰和简单。例如参数$t$完全地消失了。时序逻辑还提供了即用的概念。它的运算符模拟语言结构（副词“总是”、“直到”、动词的时态等等），造成了自然语言描述和时序逻辑形式化非常地接近。最后，时序逻辑提出了一个正式的语义（{\itshape formal semantics}），一种不可缺少的语言规范工具。
 
-    \paragraph{章节安排} 在这一章中，我们会第一次描述时序逻辑地正式语言。然后我们会严格地定义它地语义。接着通过例子的话，可能会很好地体会具体的性质是怎样表达出来。我们必须从几个可能的变体中选一个特定的形式化方法：为了一般性起见，我们选择了Emerson 和 Halpern[EH86]介绍的$CTL^*$逻辑（{\itshape Computation Tree Logic}）。
+    \paragraph{章节安排} 在这一章中，我们会第一次描述时序逻辑的正式语言。然后我们会严格地定义它的语义。接着通过例子的话，可能会很好地体会到具体的性质是怎样表达出来。我们必须从几个可能的变体中选一个特定的形式化方法：为了一般性起见，我们选择了Emerson 和 Halpern[EH86]介绍的$CTL^*$逻辑（{\itshape Computation Tree Logic}）。
 
-    当然，写时序逻辑语句需要一些经验而却阅读其他人写的语句需要更多的经验。这是模型检查技术推广遇到的障碍之一。
+    当然，写时序逻辑语句需要一些经验而且阅读其他人写的语句需要更多的经验。这是模型检查技术推广遇到的障碍之一。
 
-    这一章可能对没有$CTL^*$经验的人来说很难阅读，因为说得太短了而不能迎合新手。我们希望这本书的第二部分不仅仅是补充一些知识。第二部分详细地探讨了不同的性质类型特别是怎样把这些和不同的时序公式类型对应起来。众多从不同角度阐述的例子毫无疑问会最后提供自然且熟悉的来理解一开始听起来很深奥的语言。
+    这一章可能对没有$CTL^*$经验的人来说很难阅读，因为说得太短了而不能迎合新手。我们希望这本书的第二部分不仅仅是补充一些知识。第二部分详细地探讨了不同的性质类型特别是怎样把这些和不同的时序公式类型对应起来。众多从不同角度阐述的例子毫无疑问会最后提供自然且熟悉的方式来理解一开始听起来很深奥的语言。
 
     \section{时序逻辑语言(The Language of Temporal Logic)}
 
@@ -520,37 +520,37 @@
         \caption{Atomic propositions on an automaton and its executions}
     \end{figure}
 
-    \paragraph{2.} 经典的布尔组合器({\itshape boolean combinators})是必需的主要部分。这些包含了常量\textbf{true}和\textbf{false}、否定词$\neg$、和布尔连结词$\wedge$（合取,“和”）、$\vee$（析取，“或”），$\Rightarrow$（逻辑蕴涵）以及$\leftrightarrow$（双向蕴涵，“当且仅当”）。这些组合器可以构建与各种简单子公式相关的的复杂语句。
+    \paragraph{2.} 经典的布尔组合器({\itshape boolean combinators})是必需的主要部分。这些包含了常量\textbf{true}和\textbf{false}、否定词$\neg$、和布尔连结词$\wedge$（合取,“和”）、$\vee$（析取，“或”），$\Rightarrow$（逻辑蕴涵）以及$\Leftrightarrow$（双向蕴涵，“当且仅当”）。这些组合器可以构建与各种简单子公式相关的的复杂语句。
 
-    我们把命题和布尔连结词的混合称为命题公式（$propositional formula$）。例如，意思为“如果error则不warm”的语句$error \Rightarrow \neg warm$在figure 2.1 中的所有状态中都是一条真命题公式。注意的是我们说$\neg warm$存在于状态$q_2$是因为$warm \notin l(q_2)$。
+    我们把命题和布尔连结词的混合称为命题公式（$propositional formula$）。例如，意思为“如果error则不warm”的语句$\text{error} \Rightarrow \neg \text{warm}$在figure 2.1 中的所有状态中都是一条真命题公式。注意的是我们说$\neg \text{warm}$存在于状态$q_2$是因为$\text{warm} \notin l(q_2)$。
 
-    \paragraph{3.}时序组合器（{\itshape temporal combinator}）允许一个人描述一条执行上的状态序列，而不是仅仅各个状态各做各的操作。
+    \paragraph{3.}时序组合器（{\itshape temporal combinator}）允许一个人描述一条执行上的状态序列，而不仅仅是各个状态各做各的操作。
 
-    最简单的组合其是$\mathrm{X}$，$\mathrm{F}$，和$\mathrm{G}$。
+    最简单的组合是$\mathrm{X}$，$\mathrm{F}$，和$\mathrm{G}$。
 
-    当P表示描述当前状态的一个性质时，$\mathrm{X}P$表示下一个状态（{\itshape next state}）（$\mathrm{X}$代表下一个）满足$P$。例如$P \vee \mathrm{X}P$意思是当前状态或者下一个状态（或者两者都）满足P。在figure 2.1的例子中，$\sigma_1, \sigma_2, \sigma_3$中的每条执行都满足$\mathrm{X}\mathrm{X}error \vee \mathrm{X}\mathrm{X}\mathrm{X} ok$。
+    当P表示描述当前状态的一个性质时，$\mathrm{X}P$表示下一个状态（{\itshape next state}）（$\mathrm{X}$代表下一个）满足$P$。例如$P \vee \mathrm{X}P$意思是当前状态或者下一个状态（或者两者都）满足P。在figure 2.1的例子中，$\sigma_1, \sigma_2, \sigma_3$中的每条执行都满足$\mathrm{X}\mathrm{X}\text{error} \vee \mathrm{X}\mathrm{X}\mathrm{X} \text{ok}$。
 
     $\mathrm{F}P$表示有一个未来的状态（{\itshape a future state}）（$\mathrm{F}$代表“未来”）满足P但不指定是哪个状态。$\mathrm{G}P$则表示所有的未来状态（{\itshape all future states}）都满足$P$。这两个组合器可以不那么正式地理解成：$P$迟早有一天会出现（至少一次）以及 $P$一直都在。我们写个例子：
     \begin{equation*}
-      alert \Rightarrow \mathrm{F} halt
+      \text{alert} \Rightarrow \mathrm{F} \text{halt}
     \end{equation*}
 
     这个式子的意思是如果我们(现在)处于一个alert的状态，那么我们将会(随后)到一个halt的状态。如果我们希望这条性质永远都是对的，也就是说任何时间（{\itshape at any time}）alert状态都会跟着一个halt状态在后面。我们将其写成：
     \begin{equation*}
-      \mathrm{G}(alert \Rightarrow \mathrm{F}halt)
+      \mathrm{G}(\text{alert} \Rightarrow \mathrm{F} \text{halt})
     \end{equation*}
 
-    在figure 2.1的例子中，warm的每一次出现都会有个non-warm的状态跟在后面。因此$\mathrm{G}(warm \Rightarrow \mathrm{F} \neg warm)$ 在 $\mathcal{A}$的所有执行中都为真。我们甚至可以加强这条语句为$mathcal{A}$中的所有执行都满足$\mathrm{G}(warm \Rightarrow \mathrm{X} \neg warm)$ 在 $\mathcal{A}$，也就是说在当前状态的温度为温暖的时候，下一个状态的温度将不会温暖的这个描述永远为真。
+    在figure 2.1的例子中，warm的每一次出现都会有个non-warm的状态跟在后面。因此$\mathrm{G}(\text{warm} \Rightarrow \mathrm{F} \neg \text{warm})$ 在 $\mathcal{A}$的所有执行中都为真。我们甚至可以加强这条语句为$mathcal{A}$中的所有执行都满足$\mathrm{G}(\text{warm} \Rightarrow \mathrm{X} \neg \text{warm})$ 在 $\mathcal{A}$，也就是说在当前状态的温度为温暖的时候，下一个状态的温度将不会温暖的这个描述永远为真。
 
-    $\mathrm{G}$是$\mathrm{F}$的对偶：无论公式$\phi$是怎样的，如果$\phi$总是可以被满足，那么$\neg\phi$总有一天会被满足的这句话是不对的。因此$\mathrm{G}\phi$和$\neg \mathrm{F}\neg\mathrm{phi}$是等价的，写成$\mathrm{G}\phi \equiv \neg \mathrm{F}\neg\mathrm{phi}$
+    $\mathrm{G}$是$\mathrm{F}$的对偶：无论公式$\phi$是怎样的，如果$\phi$总是可以被满足，那么$\neg\phi$总有一天会被满足的这个说法是不对的。因此$\mathrm{G}\phi$和$\neg \mathrm{F}\neg\phi$是等价的，写成$\mathrm{G}\phi \equiv \neg \mathrm{F}\neg\phi$
 
-    \paragraph{4.} 可以通过随意地级联不同的时序组合器来发挥时序逻辑的能量和威力：举个例子,$alert \Rightarrow \mathrm{F} halt$中$\mathrm{F}$在$\mathrm{G}$的范围内。从更简单的公式开始，时序组合器产生了新的公式。该公式的意义衍生自它的组件（子公式）的意义。
+    \paragraph{4.} 可以通过随意地级联不同的时序组合器来发挥时序逻辑的能量和威力：举个例子,$\text{alert} \Rightarrow \mathrm{F} \text{halt}$中$\mathrm{F}$在$\mathrm{G}$的范围内。从更简单的公式开始，时序组合器产生了新的公式。该公式的意义派生自它的组件（子公式）的意义。
 
     $\mathrm{F}$金和$\mathrm{G}$的级联通常被用来表达重复性质。因此$\mathrm{G}\mathrm{F}\phi$，字面上理解成总是会有一个类似$\phi$的状态迟早会出现，也就是说$\phi$在一条执行的过程中会被无数次满足。这种结构很普遍，并用$\overset{\infty}{\mathrm{F}}$（读作无穷多次）作为$\mathrm{G}\mathrm{F}$的简写。对偶表达则为$\overset{\infty}{\mathrm{G}}$，$\mathrm{F}\mathrm{G}$的简写，意思是“从某个时间点以后的所有时间”或者“每个时间点，除了有限个时间点以外”。
 
     考虑figure 2.1的一条执行，有两种可能的情况：要不访问状态warm无穷多次，要不最终永远保持在状态error里面。因此，所有的执行都满足公式$\overset{\infty}{\mathrm{F}}\text{ warm} \vee \overset{\infty}{\mathrm{G}} \text{ error}$
 
-    \paragraph{5.} $\cup$组合（代表直到（{\itshape until}）的意思，不要和集合中的并集操作混淆）更加丰富和复杂。$\phi_1 \cup \phi_2$意思是$\phi_1$直到$\phi_2$验证以后才能得以验证。更准确地讲：$\phi_2$迟早有一天会被验证，同时$\phi_1$也被验证了。举个例子$\mathrm{G}(alert \Rightarrow \mathrm{F} halt)$可以被下述语句完善：从状态alert开始，警报会一直持续直到状态halt最终并且一定到达：
+    \paragraph{5.} $\cup$组合器（代表直到（{\itshape until}）的意思，不要和集合中的并集操作混淆）更加丰富和复杂。$\phi_1 \cup \phi_2$意思是$\phi_1$直到$\phi_2$验证以后才能得以验证。更准确地讲：$\phi_2$迟早有一天会被验证，同时$\phi_1$也被验证了。举个例子$\mathrm{G}(\text{alert} \Rightarrow \mathrm{F} \text{halt})$可以被下述语句完善：从状态alert开始，警报会一直持续直到状态halt最终并且一定到达：
     \begin{equation*}
       \mathrm{G}(\text{alert} \Rightarrow ( \text{alarm}\cup \text{halt}) )
     \end{equation*}
@@ -579,7 +579,7 @@
 
     让我们回到figure 2.1的例子，我们注意到所有从$q_0$离开以后的执行都会遍历$q_1$。现在，从$q_1$开始，有可能一步之后到达一个满足error的状态。因此从$q_0$离开以后的执行都满足$\mathrm{F}\mathrm{E}\mathrm{X}\text{error}$。注意用量词$\mathrm{E}$很重要，因为有一条路径不满足$\mathrm{F}\mathrm{X} \text{error}$。
 
-    "时间分支逻辑"可以自由地在可能的路径上进行量化。
+    “时间分支逻辑”可以自由地在可能的路径上进行量化。
 
     量词在公式$\mathrm{A}\mathrm{G}\mathrm{F}P$和$\mathrm{A}\mathrm{G}\mathrm{E}\mathrm{F}P$上面的作用差别非常得突出。前者的意思是每一条路径上（$\mathrm{A}$）的每一个时间点（$\mathrm{G}$），我们一定会遇到一个（$\mathrm{F}$）状态满足$P$。因此$P$会被无穷多次满足无论系统实际上采取何种动作，正如等价表达式$\mathrm{A}\overset{\infty}{\mathrm{F}}P$的清晰描述那样。第二个公式$\mathrm{A}\mathrm{G}\mathrm{E}\mathrm{F}P$意思是任意执行的任意时间点都有可能到达$P$，也就是说$P$总是有潜力可达。即使有一条$P$都不会出现的路径，$\mathrm{A}\mathrm{G}\mathrm{E}\mathrm{F}P$也可以被验证。在每条执行上，第二个量词$\mathrm{E}$可以表达可以选择哪条执行来使系统表现出不同的行为。
 
@@ -599,90 +599,90 @@
       \end{split}
     \end{equation*}
 
-    这是一种抽象的语法。在十几种，每一种解决时序公式的工具都会允许有括号并且有它自己的运算符优先级。同样地，每一种工具都有原子命题和组合器的特定集合。最重要的是，根据经验，模型检查工具的范围被限制在$CTL^*$的一部分，通常是CTL或者PLTL。
+    这是一种抽象的语法。在实际中，每一种解决时序公式的工具都会允许有括号并且有它自己的运算符优先级。同样地，每一种工具都有原子命题和组合器的特定集合。最重要的是，根据经验，模型检查工具的范围被限制在$CTL^*$的一部分，通常是CTL或者PLTL。
 
     \section{时序逻辑的语义(The Semantic of Temporal Logic)}
 
-    \paragraph{那种模型（{\itshape which models}）}时序逻辑的模型叫做{\itshape Kripke structures}。对我们来说，这只是自动机的另外一个用来引起警示的名字：用来标记一个自动机状态的命题在诸如$CTL^*$的基于状态的逻辑中扮演着基础的角色。同时用来标记自动机转换的动作的重要性就不那么大了。
+    \paragraph{哪种模型（{\itshape which models}）}时序逻辑的模型叫做{\itshape Kripke structures}。对我们来说，这只是自动机的另外一个用来引起警示的名字：用来标记一个自动机状态的命题在诸如$CTL^*$的基于状态的逻辑中扮演着基础的角色。同时用来标记自动机转换的动作的重要性就不那么大了。
 
-    转换标签在第一章当中有着基础的作用因为他们让我们可以同步几个子系统。在像章节2的本书章节中，我们只关心和时序逻辑相关的而完全忽略掉这些转换标签并重写自动机为$\mathcal{A}=<Q,T,q_0,l>$，其中$T \subseteq Q \text{x} Q$。另外一方面，我们在这里会大量地使用标记$l$来把每一个状态$q \in Q$和$q$中验证过地原子命题关联起来。回忆一下，这个标记过程是自动机建模的一个非常重要的部分：作为一个或者同个建模过程的一部分，自动机的结构和用来标记这些状态的命题是同一时间内设计完成。
+    转换标签在第一章当中有着基础的作用因为他们让我们可以同步几个子系统。在像第2章的本书章节中，我们只关心和时序逻辑相关的而完全忽略掉这些转换标签并重写自动机为$\mathcal{A}=<Q,T,q_0,l>$，其中$T \subseteq Q \text{x} Q$。另外一方面，我们在这里会大量地使用标记$l$来把每一个状态$q \in Q$和$q$中验证过的原子命题关联起来。回忆一下，这个标记过程是自动机建模的一个非常重要的部分：作为一个或者同个建模过程的一部分，自动机的结构和用来标记这些状态的命题是同一时间内设计完成。
 
-    \paragraph{满足性}我们会正式地定义“公式满足于某个给定的情况”的概念。前面章节的讨论和例子显示了，$CTL^*$的公式和给定自动机的某条执行的指定时间点有关。
+    \paragraph{满足性({\itshape Satisfaction})}我们会正式地定义“公式满足于某个给定的情况”的概念。前面章节的讨论和例子显示了，$CTL^*$的公式和给定自动机的某条执行的指定时间点有关。
 
-    我们会写$\mathcal{A}, \sigma, i \models \phi $，其意思是“在执行$\sigma$的时间点$i$处，$\phi$为真”，其中$\sigma$是$\mathcal{A}$的一条不需要从初始状态开始的执行。$\mathcal{A}$这个背景经常暗示在背后并从我们的书写忽略。我们描述$\phi$在$\sigma$的某个时间点$i$不满足为$\sigma, i\nvDash \phi$。
+    我们会写$\mathcal{A}, \sigma, i \models \phi $，其意思是“在执行$\sigma$的时间点$i$处，$\phi$为真”，其中$\sigma$是$\mathcal{A}$的一条不需要从初始状态开始的执行。$\mathcal{A}$这个背景经常隐藏在背后并从我们的书写忽略。我们描述$\phi$在$\sigma$的某个时间点$i$不满足为$\sigma, i\nvDash \phi$。
 
     通过$\phi$的结构来定义$\sigma, i \models \phi$，也就是说一个复合公式的真值是它的子公式的真值的函数。
 
-    Figure 2.3因此列出了9种定义条款，对应着9种不同的从子公式构建时序公式的方式。（回忆一下$\sigma(iu)$代表$\sigma$的第$i$个状态并且$\sigma$的长度为$|\sigma|$）。衍生操作符（$\Rightarrow, \vee, \overset{\infty}{\mathrm{F}}, \mathrm{W},$etc.）可以被推出来，因此不再明确提及。
+    Figure 2.3因此列出了9种定义条例，对应着9种不同的从子公式构建时序公式的方式。（回忆一下$\sigma(iu)$代表$\sigma$的第$i$个状态并且$\sigma$的长度为$|\sigma|$）。派生的操作符（$\Rightarrow, \vee, \overset{\infty}{\mathrm{F}}, \mathrm{W},$etc.）可以被推导出来，因此不再明确提及。
     \begin{figure}
         \centering
         \includegraphics[width=4.0in,height=2.5in]{2_3.jpg}
     \caption{Semantics of $CTL^*$}
     \end{figure}
 
-    一些上述提及的条款（为$\mathrm{F},\mathrm{G}$和$\mathrm{A}$准备的）冗余而且可以由其他条款推导出来。
+    一些上述提及的条例（为$\mathrm{F},\mathrm{G}$和$\mathrm{A}$准备的）冗余而且可以由其他条款推导出来。
 
     现在我们准备好了介绍一个派生的概念：“自动机$\mathcal{A}满足\phi$”，标记为$\mathcal{A}\models\phi$，定义为
     \begin{equation}\label{D1}
       \mathcal{A}\models \text{iff} \sigma,0\models\phi \text{ for every execution } \sigma \text{ of } \mathcal{A}
     \end{equation}
 
-    当我们讨论模型的正确性的时候，这个概念非常得简便。但是它不是用来作为一个模型的（从$q_0$离开以后的）所有执行的正确性集合。因此$\mathcal{A}\nvDash\phi$并不表示$\mathcal{A} \models \neg\phi$*（然而$\sigma,i \nvDash \phi$等价于$\sigma,i \models \neg \phi$）。
+    当我们讨论模型的正确性的时候，这个概念非常得简便。但是它不是用来作为一个模型的（从$q_0$离开以后的）所有执行的正确性集合。因此$\mathcal{A}\nvDash\phi$并不表示$\mathcal{A} \models \neg\phi$（然而$\sigma,i \nvDash \phi$等价于$\sigma,i \models \neg \phi$）。
 
     \paragraph{时间的自然属性({\itshape nature of time})} 我们承认在figure 2.3的定义有27页遇到的一阶逻辑的冗余复杂天性。和$\mathrm{F}$语句有关的“存在有如$i \leq j \leq |\sigma|$的j$\dots$”语句让人联想到了$\exists{t'}\geq t$。事实上， 在形式为$\sigma, i \models \phi$的语句种，参数$i$记录了$\sigma$中的时间过程。不管怎样，这两个框架之间存在着很重要的差别。$CTL^*$的语义和时间的自然属性有关：时间点是执行上的节点。一阶逻辑让时间的自然属性模糊不清。当我们写$\exists{t'}>t$的时候，$t'$是什么？是同个执行过程还是不同执行过程的后面某个时间？而且回到开头，$t$是什么？如果我们想要用一阶逻辑来形式化这些需求，那么它就需要把这些问题都描述出来，也就是说选择一个时间模型。
 
-    在$CTL^*$中，时间是离散的（{\itshape discrete}），与连续（{\itshape continuous}）和密集（{\itshape dense}）相反。在$CTL^*$中，在$i$和$i+1$之间什么都不存在。时序逻辑让时间参数变得隐秘：任意一个语句都隐性地与当前时间点有关。而且它的组合器选择确定了一次，对于所有可以用地结构也就确定了。用一阶逻辑能够更容易表达地性质确实存在但这只是很少一部分。可以说时序逻辑对于一阶逻辑来说，是一个可以用机器语言编译地高级语言。
-    
+    在$CTL^*$中，时间是离散的（{\itshape discrete}），与连续（{\itshape continuous}）和密集（{\itshape dense}）相反。在$CTL^*$中，在$i$和$i+1$之间什么都不存在。时序逻辑让时间参数变得隐秘：任意一个语句都隐性地与当前时间点有关。而且它的组合器选择确定了一次，对于所有可以用的结构也就确定了。用一阶逻辑更能够容易表达的性质确实存在但这只是很少一部分。可以说时序逻辑对于一阶逻辑来说，是一个可以用机器语言编译的高级语言。
+
     \section{两种时序逻辑 :PLTL和CTL（PLTL and CTL: Two Temporal Logics）}
-    
+
     PLTL（{\itshape Propositional Linear Temporal Logic}）和CTL（{\itshape Computation Tree Logic}）是两个在模型检查工具中使用最广泛的两种逻辑。他们的起源不同（PLTL追溯到[Pnu81]和CTL到[CE81]），但是它们都被视为是$CTL^*$的一部分。
-    
-    - PLTL去除掉了$CTL^*$中的$\mathrm{A}$和$\mathrm{E}$。因此，在一个给定的执行中，PLTL$\phi$不能检查可变的，会从当前开始的每一步都分离的执行。其中可能会有不确定的选择。PLTL只能用来解决执行的集合而不能解决树状组织的执行。接下来我们说的路径公式（{\itshape path formula}）而且有时候用有点粗暴的术语“线性时间逻辑”来表示这种形式化方法。
-    
-    例如，PLTL不能表达在执行的一些时间点上系统可能会往这边或者那边拓展执行。典型的例子，性质“P总是有潜力可达”，这个我们之前表达为$\mathrm{A}\mathrm{G}\mathrm{E}\mathrm{F}P$，不能在PLTL中表达。
-    
+
+    - PLTL去除掉了$CTL^*$中的$\mathrm{A}$和$\mathrm{E}$。因此，在一个给定的执行中，PLTL$\phi$不能检查可选的，会从当前开始的每一步都分离的执行。其中可能会有不确定的选择。PLTL只能用来解决执行的集合而不能解决树状组织的执行。接下来我们会说到路径公式（{\itshape path formula}）而且有时候用有点粗暴的术语“线性时间逻辑”来表示这种形式化方法。
+
+    例如，PLTL不能表达在执行的一些时间点上，系统可能会往这边或者那边拓展执行。典型的例子，性质“P总是有潜力可达”，这个我们之前表达为$\mathrm{A}\mathrm{G}\mathrm{E}\mathrm{F}P$，不能在PLTL中表达。
+
     Figure 2.4描绘了两个PLTL不能区分两个自动机$\mathcal{A}_1$和$\mathcal{A}_2$。
     \begin{figure}
         \centering
         \includegraphics[width=4.0in,height=2.0in]{2_4.jpg}
         \caption{Two automata, indistinguishable for PLTL}
     \end{figure}
-    
+
     从PLTL角度看，这两个自动机对应了一个且相同的路径集合，形式为:
     \begin{equation*}
       \begin{aligned}
-        & \text{从执行1看来:}\{P,Q\}.\{P\}.\{_\}\dots \\
+        & \text{从执行1看来:}\{P,Q\}.\{P\}.\{\_\}\dots \\
         & \text{从执行1看来:}\{P,Q\}.\{P\}.\{Q\}\dots
       \end{aligned}
     \end{equation*}
-    如果一个PLTL公式$\phi$在其中一个的话，它存在与另外一个。注意有一种CTL公式（看下面）可以辨别$\mathcal{A}_1$为真而$\mathcal{A}_2$为假。
-    
+    如果一个PLTL公式$\phi$存在于其中一个的话，它存在与另外一个。注意有一种CTL公式（看下面）可以辨别$\mathcal{A}_1$为真而$\mathcal{A}_2$为假。
+
     - CTL 是$CTL^*$的一部分并且要求每个时序组合器（$\mathrm{X},\mathrm{F},\cup,$etc.）立刻接在量词$\mathrm{A}$或者$\mathrm{E}$的范围内。因此CTL可用的组合器可以写成$\mathrm{E}\mathrm{X},\mathrm{A}\mathrm{X},\mathrm{E}\_\cup \_,\mathrm{A}\_\cup \_$和他们的派生物：$\mathrm{E}\mathrm{F}$等等。例如，figure 2.2中的四种组合器都是CTL结构。
-    
-    CTL的标准就是语法。因此$\mathrm{E}P\cup\mathrm{A}(P_2\cup P_3)$和$\mathrm{E}P\cup\mathrm{E}(P_2\cup P_3)$都是CTL公式，但是$\mathrm{E}P\cup(P_2\cup P_3)$不是因为$P\cup(P_2\cup P_3$中的$\cup$没有在量词的直接范围内。并且$\mathrm{E}P\cup(P_2\cup P_3)$等价于$\mathrm{E}P\mathrm{E}\cup(P_2\cup P_3)$，事实上是一种CTL公式。（注意$\mathrm{E}\overset{\infty}{\mathrm{F}}P$）不是一个CTL公式因为$\overset{\infty}{\mathrm{F}}$是$\mathrm{G}\mathrm{F}$的缩写。
-    
-    总是要量化未来的可能性的需要性显著限制了CTL的表达行。它不可能级联几个时序组合器当要连续地引用“一条执行”的时候。结果是CTL公式是状态公式（{\itshape state formulas}）。它们的真值只取决于当前的状态（而且这个自动机区域通过它来达到），而不取决于当前执行。这个限制有它的好处并将会在第三章看到。
-    
-    当考虑状态公式的时候，习惯得写$q\models \phi$来代表$\phi$在状态$q$被满足。
-    
-    回到figure 2.4的例子，在CTL中可以区分$\mathcal{A}_1$和$\mathcal{A}_2$，只要一方面表达为$Q \wedge \neg P$，另外一方表达为$\neg Q \wedge \neg P$，在$\mathcal{A}_1$可以表达得比$\mathcal{A}_2$长，因为$\mathcal{A}_1,q_0 \models \mathrm{A}\mathrm{X}(\mathrm{E}\mathrm{X}Q\wedge\mathrm{E}\mathrm{X}\neg Q)$然而$\mathcal{A}_2,q_0' \nvDash \mathrm{A}\mathrm{X}(\mathrm{E}\mathrm{X}Q\wedge\mathrm{E}\mathrm{X}\neg Q)$。
-    
-    同样的思想，CTL允许用$\mathrm{A}\mathrm{G}\mathrm{E}\mathrm{F}P$来表达潜在可达性但不能允许路径上非常丰富的性质。例如CTL不能表达存在一条路径$P$会被满足无穷多次（在$CTL^*$中为$\mathrm{E}\overset{\infty}{\mathrm{F}}P$）。通常我们定下了一个接近方式，如$\neg\mathrm{A}\mathrm{F}\neg\mathrm{E}\mathrm{F}P$，意思是“我们迟早有天会到达一个P永远都不会发生的状态的说法不对”。后面的性质比$\mathrm{E}\overset{\infty}{\mathrm{F}}P$严格上来说要弱：想象一个系统，其中自环可以让我们在可能选择一个$P$只可能一次的计算之前， 保持在初始状态，不论多长只要我们愿意。那么$\mathrm{E}\overset{\infty}{\mathrm{F}}P$就不能够被验证成功。然而，通过永远保持在初始状态，我们总是可以验证$\mathrm{E}\mathrm{F}P$。这个系统因此满足$\neg\mathrm{A}\mathrm{F}\neg\mathrm{E}\mathrm{F}P$但不满足$\mathrm{E}\overset{\infty}{\mathrm{F}}P$。
-    
+
+    CTL的标准就是语法。因此$\mathrm{E}P\cup\mathrm{A}(P_2\cup P_3)$和$\mathrm{E}P\cup\mathrm{E}(P_2\cup P_3)$都是CTL公式，但是$\mathrm{E}P\cup(P_2\cup P_3)$不是因为$P\cup(P_2\cup P_3$中的$\cup$没有在量词的直接范围内。并且$\mathrm{E}P\cup(P_2\cup P_3)$等价于$\mathrm{E}P\mathrm{E}\cup(P_2\cup P_3)$，事实上是一种CTL公式。（注意$\mathrm{E}\overset{\infty}{\mathrm{F}}P$）不是一个CTL公式，因为$\overset{\infty}{\mathrm{F}}$是$\mathrm{G}\mathrm{F}$的缩写。
+
+    总是要量化未来可能性的需要性显著限制了CTL的表达能力。它不可能级联几个时序组合器当要连续地引用“一条执行”的时候。结果是CTL公式是状态公式（{\itshape state formulas}）。它们的真值只取决于当前的状态（而且这个自动机区域通过它来达到），而不取决于当前执行。这个限制有它的好处并将会在第三章看到。
+
+    当考虑状态公式的时候，习惯地写$q\models \phi$来代表$\phi$在状态$q$被满足。
+
+    回到figure 2.4的例子，在CTL中可以区分$\mathcal{A}_1$和$\mathcal{A}_2$，只要一方面表达为$Q \wedge \neg P$，另外一方面表达为$\neg Q \wedge \neg P$。在$\mathcal{A}_1$可以表达得比$\mathcal{A}_2$长，因为$\mathcal{A}_1,q_0 \models \mathrm{A}\mathrm{X}(\mathrm{E}\mathrm{X}Q\wedge\mathrm{E}\mathrm{X}\neg Q)$然而$\mathcal{A}_2,q_0' \nvDash \mathrm{A}\mathrm{X}(\mathrm{E}\mathrm{X}Q\wedge\mathrm{E}\mathrm{X}\neg Q)$。
+
+    同样的思想，CTL允许用$\mathrm{A}\mathrm{G}\mathrm{E}\mathrm{F}P$来表达潜在可达性但不能允许去表达路径上非常丰富的性质。例如CTL不能表达：存在一条路径$P$会被满足无穷多次（在$CTL^*$中为$\mathrm{E}\overset{\infty}{\mathrm{F}}P$）。通常我们定下了一个接近方式，如$\neg\mathrm{A}\mathrm{F}\neg\mathrm{E}\mathrm{F}P$，意思是“我们迟早有天会到达一个P永远都不会发生的状态的这个说法不对”。后者的性质比$\mathrm{E}\overset{\infty}{\mathrm{F}}P$严格上来说要弱：想象一个系统，其中自环可以让我们在可能选择一个$P$只可能一次的计算之前， 保持在初始状态，不论多长只要我们愿意。那么$\mathrm{E}\overset{\infty}{\mathrm{F}}P$就不能够被验证成功。然而，通过永远保持在初始状态，我们总是可以验证$\mathrm{E}\mathrm{F}P$。这个系统因此满足$\neg\mathrm{A}\mathrm{F}\neg\mathrm{E}\mathrm{F}P$但不满足$\mathrm{E}\overset{\infty}{\mathrm{F}}P$。
+
     \paragraph{选择哪个（{\itshape  which to choose}）}PLTL或者CTL。理论上，当需要表达的时候，CTL和PLTL有它们各自的长处和短处。这就是为什么会有$CTL^*$定义的出现。$CTL^*$在CTL和PLTL之后提出。
-    
+
     在实际中，我们试图描述一个系统的期望行为时，CTL的缺点要比PLTL尴尬得多。CTL的大部分弱点可以通过使用FCTL（F代表“公平”，CTL的一种允许我们表达如$\mathrm{E}(\overset{\infty}{\mathrm{F}}P\wedge\overset{\infty}{\mathrm{F}}Q)$的公平性质的扩展）克服。
-    
+
     然而，CTL的缺点都被用CTL进行模型检查比用PLTL进行更有效率的这个事实抵消掉了。（FCTL对于多项式时间内模型检查非常重要）。
-    
-    因此正确的选择是在几个因素之中曲奇折衷。如果我们的目标是要陈述一些性质，那么我们会选择PLTL（或甚至$CTL^*$中有比PLTL更冷门和技术更加复杂的这两个缺点的一个）。如果我们目标是系统的详尽验证，那么CTL中的规范更有可能避免组合爆炸陷进。如果我们希望为了检测可能的错误而进行即使验证，那么PLTL会是一个好选择。如果我们需要用这个或那个特定的工具，这个工具会强制使用它的时序逻辑语言而不能选择其它的。主流工具要不用CTL（例如SMV），要不用PLTL（例如SPIN）而且我们很伤心地看到FCTL的使用并没有更加得广泛（SMV允许在模型定义中写下公平性约束，而不是在时序公式中）。
-    
+
+    因此正确的选择是在几个因素之中取其折衷。如果我们的目标是要陈述一些性质，那么我们会选择PLTL（或甚至$CTL^*$中有比PLTL更冷门和技术更加复杂的这两个缺点的一个）。如果我们目标是系统的详尽验证，那么CTL中的规范更有可能避免组合爆炸陷阱。如果我们希望为了检测可能的错误而进行即使验证，那么PLTL会是一个好选择。如果我们需要用这个或那个特定的工具，这个工具会强制使用它的时序逻辑语言而不能选择其它的。主流工具要不用CTL（例如SMV），要不用PLTL（例如SPIN）而且我们很伤心地看到FCTL的使用并没有更加得广泛（SMV允许在模型定义中写下公平性约束，而不是在时序公式中）。
+
     \section{$CTL^*$的表达能力（The Expressivity of $CTL^*$）}
-    
-    \quad 在这个快速的介绍后，读者肯定很好奇$CTL^*$是否真的可以表示十几种感兴趣的性质？
-    
+
+    \quad 在这个快速的介绍后，读者肯定很好奇$CTL^*$是否真的可以表示实际中感兴趣的性质？
+
     首先注意到，没有一种逻辑可以表达建模决定中没有考虑的事物。在第1章中遇到的自动机不包括随机概念，例如选择一个转换而不是另一个转换的概率。另外，我们自动机永远不会遭遇失败（{\itshape failures}）而且它们之间的转换没有一段时间来保持（{\itshape duration}）。因此，考虑这些自动机的随机性或者时间属性没有任何意义：需要引进其它模型例如第5章中介绍的定时自动机。
-    
+
     当性质与自动的执行树有关时，$CTL^*$相当地有表达能力。理论学家已经得到许多理论来揭露问题的基本面。我们来提两个似乎特别感兴趣的话题：
     \begin{itemize}
       \item 任意一个形如“从外部世界看，被研究的自动机$\mathcal{A}$行为像参照自动机$\mathcal{B}$”都可以用CTL表达。具体地讲就是，对于任意的$\mathcal{B}$，一个CTL公式$\phi_{\mathcal{B}}$可以产生“像$\mathcal{B}$”的意思，也就是说，对于每一个$\mathcal{A}$，$\mathcal{A} \models \phi_{\mathcal{B}}$当且仅当$\mathcal{A}$和$\mathcal{B}$从外部来看是不可区分的。[BCG88]
@@ -691,6 +691,6 @@
             \phi\mathrm{Z}\psi=\mathrm{G}(\phi \Rightarrow \mathrm{X}(\neg\phi\mathrm{W}(\psi\wedge\neg\phi)))
           \end{equation*}
     \end{itemize}
-    
-    从实用的角度来讲，$CTL^*$大多数情况下都足够了。很少会发生一个感兴趣地性质不能被表达。事实上，我们经常面对的问题是性质是可表达的，但不是自然的，正如我们这本书第二部分看到的那样。
-\end{document}
+
+    从实用的角度来讲，$CTL^*$大多数情况下都足够了。很少会发生一个感兴趣的性质不能被表达。事实上，我们经常面对的问题是性质是可表达的，但不是自然的，正如我们这本书第二部分看到的那样。
+\end{document} 
