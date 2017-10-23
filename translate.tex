@@ -3,6 +3,7 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{listings}
 
 % 结合\quad可以是现在每个章节首行空两格
 \setlength{\parindent}{2em}
@@ -12,6 +13,7 @@
 \author{林奇峰}
 \date{\today}
 \maketitle
+\tableofcontents
     \chapter{Automata 自动机}
 
     正如前言所述，模型检查包括验证系统模型的一些属性。在任何检查开始之前，一个人就必须面对正在研究的系统的建模任务。坦白地说，我们强调这个建模步骤是困难的，但又对后续获得的结果的相关性至关重要。没有通用的方法来建模一个系统:建模是一项具有挑战性的任务，最后交付给一些能够很好结合物理现实和应用现实或者计算机模型的资深工程师来执行。此外，在建模前引入建模专家和“区域”专家的混合团队的做法是可取的。
@@ -613,7 +615,7 @@
 
     通过$\phi$的结构来定义$\sigma, i \models \phi$，也就是说一个复合公式的真值是它的子公式的真值的函数。
 
-    Figure 2.3因此列出了9种定义条例，对应着9种不同的从子公式构建时序公式的方式。（回忆一下$\sigma(iu)$代表$\sigma$的第$i$个状态并且$\sigma$的长度为$|\sigma|$）。派生的操作符（$\Rightarrow, \vee, \overset{\infty}{\mathrm{F}}, \mathrm{W},$etc.）可以被推导出来，因此不再明确提及。
+    Figure 2.3因此列出了9种定义条例，对应着9种不同的从子公式构建时序公式的方式。（回忆一下$\sigma(i)$代表$\sigma$的第$i$个状态并且$\sigma$的长度为$|\sigma|$）。派生的操作符（$\Rightarrow, \vee, \overset{\infty}{\mathrm{F}}, \mathrm{W},$etc.）可以被推导出来，因此不再明确提及。
     \begin{figure}
         \centering
         \includegraphics[width=4.0in,height=2.5in]{2_3.jpg}
@@ -624,7 +626,7 @@
 
     现在我们准备好了介绍一个派生的概念：“自动机$\mathcal{A}满足\phi$”，标记为$\mathcal{A}\models\phi$，定义为
     \begin{equation}\label{D1}
-      \mathcal{A}\models \text{iff} \sigma,0\models\phi \text{ for every execution } \sigma \text{ of } \mathcal{A}
+      \mathcal{A}\models \phi \text{ iff } \sigma,0\models\phi \text{ for every execution } \sigma \text{ of } \mathcal{A}
     \end{equation}
 
     当我们讨论模型的正确性的时候，这个概念非常得简便。但是它不是用来作为一个模型的（从$q_0$离开以后的）所有执行的正确性集合。因此$\mathcal{A}\nvDash\phi$并不表示$\mathcal{A} \models \neg\phi$（然而$\sigma,i \nvDash \phi$等价于$\sigma,i \models \neg \phi$）。
@@ -683,7 +685,7 @@
 
     首先注意到，没有一种逻辑可以表达建模决定中没有考虑的事物。在第1章中遇到的自动机不包括随机概念，例如选择一个转换而不是另一个转换的概率。另外，我们自动机永远不会遭遇失败（{\itshape failures}）而且它们之间的转换没有一段时间来保持（{\itshape duration}）。因此，考虑这些自动机的随机性或者时间属性没有任何意义：需要引进其它模型例如第5章中介绍的定时自动机。
 
-    当性质与自动的执行树有关时，$CTL^*$相当地有表达能力。理论学家已经得到许多理论来揭露问题的基本面。我们来提两个似乎特别感兴趣的话题：
+    当性质与自动机的执行树有关时，$CTL^*$相当地有表达能力。理论学家已经得到许多理论来揭露问题的基本面。我们来提两个似乎特别感兴趣的话题：
     \begin{itemize}
       \item 任意一个形如“从外部世界看，被研究的自动机$\mathcal{A}$行为像参照自动机$\mathcal{B}$”都可以用CTL表达。具体地讲就是，对于任意的$\mathcal{B}$，一个CTL公式$\phi_{\mathcal{B}}$可以产生“像$\mathcal{B}$”的意思，也就是说，对于每一个$\mathcal{A}$，$\mathcal{A} \models \phi_{\mathcal{B}}$当且仅当$\mathcal{A}$和$\mathcal{B}$从外部来看是不可区分的。[BCG88]
       \item $CTL^*$组合器的表达能力充足。Kamp[Kamp68,GPSS80]的一个理论显示任意一个语义可以用与figure 2.3相似的条例来表达的时序组合器都可以用被定义为基于$\mathrm{X}$和$\cup$的表达式。举个例子，一个组合器$\mathrm{Z}$定义为“$\sigma \models \phi \mathrm{Z} \psi$当前仅当每一对满足$\phi$的状态对我们都可以找到一个满足$\psi$的状态（严格地限制两者之间）”。这可以用$\cup$和$\mathrm{X}$表达成：
@@ -693,4 +695,317 @@
     \end{itemize}
 
     从实用的角度来讲，$CTL^*$大多数情况下都足够了。很少会发生一个感兴趣的性质不能被表达。事实上，我们经常面对的问题是性质是可表达的，但不是自然的，正如我们这本书第二部分看到的那样。
+
+    \chapter{Model Checking}
+
+    \quad 在本章中我们会描述用于模型检查的算法的原理。该算法可以找出一个给定的自动机是否满足一个给定的时序公式。
+
+    我们会各自介绍逻辑CTL和PLTL的模型检查问题。这两个问题需要些许不同的回答并且相应的算法也是独立发展的。
+
+    \section{模型检查CTL（Model Checking CTL）}
+
+    \quad CTL的模型检查算法最初是由Queille, Sifakis, Clarke, Emerson和Sistla[QS82, CES86]发展出来的并且随后被进行了改进（看例子[CGL94a]）。
+
+    这个基础算法再验证领域扮演着很重要的角色。这一部分归因于这个算法在每一个组件里面都是线性时间运行（自动机是一方面，CTL公式是另一方面）。这个算法依赖于CTL只能表达状态公式这个客观事实。事实上，CTL的这个特性让我们可以根据哪个状态满足哪个公式来推导而不是去思索哪条执行才是我们真正感兴趣的目标。
+
+    \paragraph{基本原理{\itshape Basic principle}}. CTL模型检查算法的基础部分一个步骤。该步骤\textbf{标记}哪个运行在自动机$\mathcal{A}$上面以及从CTL公式$\phi$开始会标记自动机的每个状态$q$和$\phi$的每个子公式$\psi$，其中$\psi$满足于状态$q$。最后，对于每个状态和每条子公式，\textbf{q.psi}值为\textbf{真（true）}如果$q\models\psi$，反之为\textbf{假（false）}。
+
+    我们用术语“标记”(marking)是为了表示\textbf{q.psi}的值计算过后就被保留了下来。保留这个过程很重要因为\textbf{q.phi}的标记用了从\textbf{q}开始可达的状态\textbf{q'}的值，即\textbf{phi}的子公式\textbf{psi}的值\textbf{q'.psi}。当\textbf{phi}的标记完成了，很容易通过查找$A$的初始状态$q_0$的值\textbf{q0.phi}就可以说出是否$A\models\phi$。这里这就是算法的关键了：
+
+    \lstset{language=C}
+    \begin{lstlisting}
+    procedure marking(phi)
+        case 1: phi = P
+            for all q in Q, if P in l(q) then do q.phi := true,
+                                            else do q.phi := false.
+
+        case 2: phi = not psi
+            do marking(psi);
+            for all q in Q, do q.phi := not(q.psi).
+
+        case 3: phi = psi1 /\ psi2
+            do marking(psi1); marking(psi2);
+            for all q in Q, do q.phi := and(q.psi1, q.psi2).
+
+        case 4: phi = EX psi
+            do marking(psi);
+            for all q in Q, do q.phi := false; /* initialisation */
+            for all (q, q') in T, if q'.psi = true then do q.phi := true.
+
+        case 5: phi = E psi1 U psi2
+            do marking(psi1); marking(psi2);
+            for all q in Q,
+                q.phi := false; q.seenbefore := false; /* initialisation */
+            L := {};                        /* L: states to be processed */
+            for all q in Q, if q.psi2 = true then do L := L + {q};
+            while L nonempty{
+                draw q from L;                              /* must mark q */
+                q.phi := true;
+                for all (q', q) in T{
+                    if q'.seen before = false then do { /* q' is a predecessor of q */
+                        q.seenbefore := true;
+                        if q'.psiq = true then do L := L + {q'};
+                    }
+                }
+            }
+
+            case 6: phi = A psi U psi2
+                /* See further*/
+    \end{lstlisting}
+
+    我们看看当$\phi$是一个原子命题（case 1）， 一个否定(case 2) 或者一个合取（case 3）的时候标记是多么得简单。上面三种情况中，$\phi$的标记只需要遍历$Q$次——在$O|Q|$时间内——加上$\phi$的子公式标记所花的时间。
+
+    当$\phi$形如$\text{\textbf{EX}}\psi$（case 4）时， 标记所花的时间就是遍历$T$（自动机的转换集合）。因此这个步骤所花时间不超过$O|T|$， 再加上初始化和$\psi$的标记时间。$\text{\textbf{AX}}\psi$这情况就不讨论了：他等价于$\neg\text{\textbf{EX}}\neg\psi$。
+
+    当$\phi$形如$\text{\textbf{E}}\psi_1\cap\psi_2$（case 5）时，从$\psi_1$何$\psi_2$开始标记的$\phi$的标记所花时间等价为计算图的受控可达性的标准算法（转换必须回溯遍历）。我们选择仔细地描述这样的算法是为了说明这一步时怎样可以不重复访问转换$(q,q')\in T$来完成，也因此计算时间在$O(|Q|+|T|)$以内。
+
+    这个标记算法对于$\text{\textbf{A}}\psi_1\text{U}\psi_2$（case 6）来说有点复杂（看下面）。这依赖于一个发现：状态$q$满足$\text{\textbf{A}}\psi_1\text{U}\psi_2$当且仅当——要不(a)$q$满足$\psi_2$， 要不(b.1)$q$满足$\psi_1$，(b.2)$q$至少有一个子状态并且(b.3)它的子状态都满足$\text{\textbf{A}}\psi_1\text{U}\psi_2$。这个标记算法会将每个状态都与一个计数器\textbf{nb}关联。一开始， \textbf{q.nb}设为{\itshape degree(q)}，也就是$q$在自动机的图中的子状态数。然后， 每次$q$的一个子状态被标记为满足$\text{\textbf{A}}\psi_1\text{U}\psi_2$以后，$q$的计数器就减少一次。当最后\text{\textbf{q.nb}}值为0，我们就知道了$q$的所有子状态都满足$\text{\textbf{A}}\psi_1\text{U}\psi_2$。如果$q$满足$\psi_1$， 那我们就知道它满足$\phi$。
+     \lstset{language=C}
+    \begin{lstlisting}
+    case 6: phi = A psi1 U psi2
+        do marking(psi1); marking(psi2);
+        L := {}                         /* states to be processed */
+        for all q in Q,
+            q.nb := degree(q); q.phi = false;      /* initialisation */
+        for all q in Q, if q.psi2 = true then do L := L + {q};
+        while L nonempty{
+            draw q from L;                           /* must mark q */
+            L := L - {q};
+            q.phi := true;
+            for all (q',q) in T {        /* q' is a predecessor of q */
+                q'.nb := q'.nb -1;                      /* decrement */
+                if(q'.nb = 0) and (q'.psi1 = true) and (q'.phi = false)
+                    then do L := L + {q'}
+            }
+        }
+    \end{lstlisting}
+
+    验证这个方法的正确性先不说，对于$\text{\textbf{A}}\psi_1\text{U}\psi_2$， 这比其他情况还复杂。终止条件很明显：每个状态只会被加到等待被处理的状态集合\textbf{L}中一次。
+
+    \paragraph{算法的正确性{\itshape Correctness of the algorithm}.}为了帮助阅读这个代码，我们会证明最后的标记情况（$\phi$形如$\text{\textbf{A}}\psi_1\text{U}\psi_2$）的正确性（其他情况要更简单）。对此我们假设子公式$\psi_1$和$\psi_2$的标记是正确的。 一开始，很容易看出如果\textbf{q.phi}曾经在标记中被设为\textbf{true}，那么$q$满足$\phi$。但反过来来看的话就很难。为了搞清楚，我们想象下\textbf{q.phi}在遍历后值为\textbf{false}。那么$q\nvDash\psi_2$是必须的。如果还有$q\nvDash\psi_1$，那么$q\nvDash\phi$并且\textbf{q.phi}的值是正确的。如果$q\models\psi_1$（而且如果$degree(q) \neq 0$），那么\textbf{q.nb}在标记的最后肯定是正的（不然$q$会被插入到\text{L}中）。因此$q$的一个子状态$q_1$，保留有\textbf{q1.phi}的值为\textbf{false}。同样的推论也可以应用到$q_1$上。它不满足$\psi_2$并且如果它满足$\psi_1$，则它有一个子状态$q_2$不满足$\phi$等等。因此我们列出了一条从$q$出发不满足$\psi_1\text{U}\psi_2$的执行。这证明了$q\nvDash\phi$。因此$q$的标记是对的。
+
+    \paragraph{算法的复杂度{\itshape Complexity of the algorithm}}复杂度分析（包括终止证明）很简单：算法的每一步要不和一个节点$q\in Q$的标记有关，要不和$T$的转换$(q',q)$处理有关。因此一旦$\psi_1$和$\psi_2$的标记完成，那么需要来标记$\phi$的时间在$o(|O|+|T|)$以内，也就是$O(|\mathcal{A}|)$。
+
+    最后，任意公式$\phi$的标记在需要$\phi$的子公式的标记之后，接着$\phi$的耗时为$O|\mathcal{A}|$的特定一步。总的标记花费时间为$O(|\mathcal{A}|\text{x}|\phi|)$。
+
+    用来检查"does $\mathcal{A},q_0\models\phi$"的CTL公式$\phi$可以在$O(|\mathcal{A}|\text{x}|\phi|)$内解决。
+
+    \section{模型检查PLTL( Model checking PLTL)}
+    \quad PLTL模型检查算法的原理很大程度归因于Lichtenstein, Pnueli, Vardi and Wolper [LP85, VW86]。我们的讨论会避过某些很技术性的细节：因为这些读者会非常清楚。
+
+    在PLTL的情况中，我们不再和状态公式打交道并且不再依赖于标记自动机的状态。PLTL的公式是路经公式（{\itshape path formulas}）（看2.4小节）并且一个有限自动机通常会产生无限条不同的执行。它们自身长度通常是无限的。在这篇文章中，采用的视角会是语言理论。
+
+    思考一下接下来的公式$\phi:\overset{\infty}{\mathrm{F}}P$。一条满足$\phi$的执行$q_0,q_1,q_2\dots$肯定包含了无限多个$P$满足的位置$q_{n1},q_{n2},\dots$。在每一个这些位置之间肯定有任意个（虽然是有限的）状态满足$\neg P$。我们会说这条执行形如$((\neg P)^*.P)^\omega$。
+
+    同样的思想，一条不满足$\phi$的执行肯定从某个位置开始，接下来的状态只会满足$\neg P$。这样的执行说成形如$(P + \neg P)^*.(\neg P)^\omega$。
+
+    这两个我们刚刚用来表达一条执行满足$\phi$的形式的概念是$\omega$正则表达式（$\omega-regular expressions$）。这些拓展了著名的正则表达式（{\itshape regular expression}）概念，一种用来解决无限多个单词的语言的拓展。在$\omega$正则表达式（$\omega-regular expressions$）我们在经典指数“*”（代表任意次但有限次的重复）旁边添加了新的指数“$\omega$”（代表了无限多次重复）。
+
+    \paragraph{基本原理 {\itshape Basic principle}} PLTL模型检查依赖于将每个PLTL公式$\phi$和一个$\omega$正则表达式$\varepsilon_\phi$关联起来。$\varepsilon_\phi$描述了一条满足$\phi$的执行的表达形式。"dose $\mathcal{A}\models\phi$"问题随之变成“are all the executions of $\mathcal{A} of the form described by \varepsilon_\phi$？”（"是否$\mathcal{A}$的所有执行都是$\varepsilon_\phi$描述的形式？"）。
+
+    在实际中， 这个算法不会在正则表达式上进行推导而是在自动机上。给定一个公式$\phi$，一个PLTL模型检查器会构建一个自动机$\mathcal{B}_{\neg\phi}$来描述不满足$\phi$的执行。这个自动机的规模在最差情况下是$O|2^{|\phi|}|$。我们强力地同步（也就是说，这样以来这两个自动机会同时演变，看1.5小节）$\mathcal{A}$和$\mathcal{B}_{\neg\phi}$来获得一个自动机，表示为$\mathcal{A}\otimes\mathcal{B}_{\neg\phi}$，其中唯一存在的行为只有$\mathcal{A}$中被$\mathcal{B}_{\neg\phi}$接受的行为，也就是说$\mathcal{A}$中不满足的$\phi$的执行。
+
+    这个模型检查问题“does $\mathcal{A}\models\phi$”因此也变成了“is the language recognized by $\mathcal{A}$和$\mathcal{B}_{\neg\phi}$ empty”问题（“$\mathcal{A}$和$\mathcal{B}_{\neg\phi}$表达的语句是否为空”）。
+    \begin{figure}
+        \centering
+        \includegraphics[width=4.0IN]{3_1.JPG}
+        \caption{$\mathcal{B}_{\neg\phi}$ for $\phi$:$\text{\textbf{G}}(P)\Rightarrow\text{\textbf{X}}\text{\textbf{F}}Q$}
+    \end{figure}
+
+    \paragraph{一个简单的例子{\itshape A simple example}} Figure 3.1描绘了一个公式$\phi$对应的自动机$\mathcal{B}_{\neg\phi}$，其中$P$每次出现都要跟着$Q$的出现，在PLTL中写成 $\phi$:$\text{G}(P)\Rightarrow\text{X}\text{F}Q$。因此$\neg\phi$意味着存在有P出现后我们再也遇不到$Q$。$\mathcal{B}_{\neg\phi}$的运转也就随之清晰。这个自动机是不确定的。他可以选择在任何P被验证的时间来从$q_0$移动到$q_1$去猜测$Q$不再出现了。如果它成功地停在$q_1$无限多次并且不阻塞，那么它事实上就看到了一个违反$\phi$的行为。这就是我们通过给$q_1$加上双圆圈来表示。
+
+    \chapter{TODO}
+
+    \chapter{TODO}
+
+    \chapter{可达性 Reachability Properties}
+    \textbf{可达性阐述了一些特定的情况一定会到达（出现）}
+
+    实际中的例子：“we can obtain n<0”（R1， 我们可以获得n<0的情况）， “we can enter a critical section”（R2，我们可以进入临界区）
+
+    通常感兴趣的性质都是可达性的否定（negation）： “we cannot have n<0”（R3, 我们不能有n<0的情况），“we cannot reach \textbf{crash} state”（R4, 我们不能达到\text{crash}状态）。
+
+    可达性可以是简单的（simple），如前面的例子所述，或者当一个条件限制了到达目标状态的路径形式的时候，它是有条件的，有约束的（conditional）：“we can enter the critical section without traversing n=0”（R5，我们可以在不判断n=0的情况下进入临界区）。
+
+    可达性可以应用到任意可达的状态。比较一下"we can always return to the initial state"（R6， 我们总是可以回到初始状态）和“we can return to the initial state”（R7，我们可以回到初始状态）。在R6中， “总是”（always）隐含着“starting from any reachable state”（从任意可达的状态开始）。因此（R6）是要比（R7）强的性质：在后者， 当前状态会有回到初始状态的能力但是其随后的状态就没有了。
+
+    \section{时序逻辑中的可达性 Reachability in Temporal Logic}
+    当用时序逻辑表达可达性的时候，EF combinator（组合器）自然而然地出现了并且可达性可以定义为$\text{\textbf{E}}\text{\textbf{F}}\phi$。其中$\phi$是不包含时序组合器（temporal combinator）的命题公式（这样的$\phi$在时序逻辑设定中通常被叫做当前时态公式（present tense formula））。回忆一下$\text{\textbf{E}}\text{\textbf{F}}\phi$读作“there exists a path from the current state along which some state satisfies $\phi$”（存在有一条从当前状态开始的路径，其中的一些状态会满足$\phi$）（看2.1小节）。上面的例子就正式地表达为$\text{\textbf{E}}\text{\textbf{F}}(n<0)$（R1），$\text{\textbf{E}} \text{\textbf{F}} \text{\textbf{crit\_sec}}$，（R2），
+    $\neg\text{\textbf{E}}\text{\textbf{F}}(n<0)$（R3），$\neg\text{\textbf{E}}\text{\textbf{F}}\text{\textbf{crash}}$（R4）。回忆一下，$\neg\text{\textbf{E}}\text{\textbf{F}}\phi$的对偶表达为$\text{\textbf{A}}\text{\textbf{G}}\neg\phi$（读作“along very path, at any time, $\neg\phi$”, "无论哪个路径，哪个时间， 都有$\neg\phi$"）。
+
+    从任意可达的状态开始的可达性需要嵌套$\text{\textbf{A}}\text{\textbf{G}}$和$\text{\textbf{E}}\text{\textbf{F}}$：（R6）可以表达为$\text{\textbf{A}}\text{\textbf{G}}($\text{\textbf{E}}\text{\textbf{F }}$\text{\textbf{init}})$。
+
+    条件可达性自然地用$\text{\textbf{A}}\_\text{\textbf{U}}\_$构建，其中$\text{\textbf{U}}$（until）替代了$\text{\textbf{F}}$。（R5）写成$\text{\textbf{E}}(\neq 0)\text{\textbf{U}}\text{\textbf{crit\_sec}}$，读作“存在有一条的路径，$n\neq 0$一直为真直到$\text{\textbf{crit\_sec}}$为真”。
+
+    前面所有的例子都用了CTL逻辑。我们注意到线性时序逻辑PLTL不适合可达性。正如它隐形地量化了所有的路径，PLTL只能表述可达性的反面：某些情况是不可达的。嵌套可达性（Nested reachability）在PLTL中不可表达。
+
+    \section{模型检查器和可达性 Model Checkers and Reachability}
+    可达性通常是最容易验证的。
+
+    当一个模型检查工具可以构建一个系统的可达性图的时候，理论上它通过简单地检查这张图就可以回答所有的可达性问题，即使它并没有包含时序逻辑。
+
+    这本书第三部分描述的所有工具可以用这个或者那个的形式回答可达性问题， 而我们认为这样的能力可以构建任意模型检查器的最基本功能性。
+
+    但是这些功能性有很多种：一些工具可以允许一个人约束执行（条件可达性），或者任意选择一个开始状态集合（嵌套可达性），或者验证一个状态家族的可达性（例如“all the states in which $n=0$”，所有$n=0$的状态）。
+
+    一些工具，例如DESIGN/CPN（看14章）,是特地为可达性的验证设计的，并且它们提供了许多参数来帮助用户避免状态爆炸的问题（state explosion problem）。例如DESIGN/CPN会允许用户显性指定图的某些部分弃掉来构建部分状态图。
+
+    \section{可达性图的计算 Computation of the Reachability Graph}
+    可达状态的集合通常来说不能立刻地看一眼系统就能得出来。当几个自动机同步（或者使用了变量，定时器，计数器等等的时候），可达状态的集合的构建就变得non-trivial（非平凡）。
+
+    有两种算法家族来解决可达性问题：“forward chaining”（前向链式算法）和“backward chaining”（反向链式算法）。
+
+    \paragraph{Forward chaining（前向链式算法）。} 这个是一种自然而然萌生出的方法：为了构建可达状态的集合，我们从初始状态开始，把它们的子状态添加进去，然后再往下继续直到饱和，即没有新的状态可以添加到集合了。这种计算直接子状态的方法依赖于何种自动机，但是它一般来说很简单，而这是仿真工作的任务。
+
+    唯一的难点是可用性：构建的状态集合可能会有潜在的爆炸问题
+
+    \paragraph{Backward chaining（反向链式算法）。} 这里的想法是构建一个状态集合，从该集合里面的状态开始可以遍历到一些目标状态，其中目标状态是我们想要知道是否可达的状态：我们从这些目标状态开始，添加它们的直接父状态到集合里面，继续这个步骤直到饱和。然后我们测试是否一些初始状态在这个饱和了的状态集合里面。这个步骤只不过4.1小节的$Pre^*(S)$算法的枚举版本。
+
+    前向搜索和反向搜索相比有两个缺点。第一，在前向搜开始之前需要先确定一个目标状态集合：一个人不能实现构建一个可达性图然后检验是否这个或者那个状态出现了。注意一下，虽然如此，这个障碍还有正面效应：目标状态是控制验证的过程只是作为一个额外的参数。
+
+    第二，通常来说，计算直接父状态要比计算子状态复杂得多。当然这个情况也要是视模型而定：例如，在自动机有变量和守卫转换和复杂的赋值情况下，直接子状态要更加容易获得（它可以直接计算表达式的结果），相比之下，直接父状态不容易（这些需要解决等式和找出哪个变量的值会生成合适的表达式结果）。
+
+    最后，这两种方法是互补的。为了找出哪个集合S是可达的，在第一种方法种可以计算出可达性集合然后检验它是否和S有交集，或者可以计算出$Pre^*(S)$再验证是否和初始状态集合有交集。
+
+    通常会发生一种情况：其中一个方法终止得很快而另外一个受累与状态爆炸得问题会延迟。这种情况很难解，因为经常不能预测哪种方法更有可能成功。为了说清楚为什么，想象一个不可达得目标状态集合$S$。在这个情况下，两种算法遇到得集合完全和另外一个不一样，并且其中一个集合的大小并不能提供另外一个集合大小的线索。
+
+    \paragraph{"On-the-fly" exploration。}为了回答可达性问题，“on-the-fly”方法会在不完全构建可达性图的情况下求解。。这个方法的目标还是构建这个图，但是这个构建过程只是随着求解过程部分地构建，并且也不需要记忆之前访问过的东西。这个方法试图摆脱当前计算机相比受限于处理速度，更受限于内存资源的事实。
+
+    从实际的观点来讲，读者应该记住以下内容：on-the-fly 方法在目标状态可达的时候更有效率（答案“yes”不需要详尽的求解才能获得）；它们可以用前向或者反向的方法，虽然它们已经应用了两者中的前一个方法；最后，它们可能可以应用到一些无限状态的系统。
+
+    \chapter{Safety Properties 安全属性}
+    一个安全属性表达为：在某些条件下，有一个事件永远不会发生。
+
+    例子到处都是，通常都没有条件限制：“所有的进程永远都不会同时出现在它们的临界区”（S1），或者“内存溢出永远不会发生”（S2），或者“这种情况...是不可能的”（S3）。一个有条件限制的安全性例子为，“只要 钥匙不在点火装置上，汽车就不会启动”（S4）。
+
+    通常来说，从这些例子中可以看到，安全性的描述表达为某种不希望看到的事件不会发生。
+
+    同样地，这些例子显示了可达性的否定就是安全属性（比较一下（A3）和（S3）），安全属性的否定就是可达性。
+
+    \section{Safety Properties in Temporal Logic 时序逻辑中的安全性}
+    CTL中的组合器$\text{\textbf{AG}}$和PLTL中的组合器$\text{\textbf{G}}$很自然地表达了安全属性。
+
+    例如，在CTL中，我们可以表述（S1）和（S2）为$\text{\textbf{AG}}\neg(\text{\textbf{crit\_sec}}\wedge\text{\textbf{crit\_sec}})$
+    和$\text{\textbf{AG}}\neg\text{\textbf{overflow}}$。对应的PLTL公式（也就分别是$\text{\textbf{G}}\neg(\text{\textbf{crit\_sec}}\wedge\text{\textbf{crit\_sec}})$）
+    和$\text{\textbf{G}}\neg\text{\textbf{overflow}}$）是相等的。
+
+    许多安全性都有条件限制，例如“只要 钥匙不在点火装置上，汽车就不会启动”（S4）自然地就用$\text{\textbf{W}}$（weak until）组合器表示。（S4）就正式地表示为：
+    \begin{equation}\label{}
+      \text{\textbf{A}}\neg\text{\textbf{starts W key}}
+    \end{equation}
+    读作“不管（\textbf{A}）怎么样，汽车永远不会启动（$\neg$\textbf{starts}）除非（\textbf{W}）钥匙插到了点火装置（key）”。在PLTL中，\textbf{starts W key}是（7.1）式子的等价翻译。
+
+    用strong until表达的式子
+    \begin{equation}\label{}
+      \text{\textbf{A}}\neg\text{\textbf{starts U key}}
+    \end{equation}
+    不是很对应（S4）。（7.1）和（7.2）的差别是\textbf{U}和\textbf{W}的差别：strong until需要我们以有一天钥匙的出现结束。所以，在我们8.1小节解释的一样，（7.2）不是一个安全属性。
+
+    \section{A Formal Definition 正式定义}
+    在第7章开头的安全属性的定义是不正式且有歧义的。强调安全属性这个概念的重要性是因为我们提供了一个更加精确的定义。
+
+    按照常识来给出这样的定义相当地复杂。命题可以在著作中找到[LS85, ADS86, AS87, Kin94]。这些都引出了一个不正式的想法：我们做的事情越少，我们越有机会找到一个被验证的安全属性。换句话说，满足所有的安全属性的唯一方法就是按兵不动！因此有了一个安全属性的“拓扑”概念：安全属性是任意满足以下条件的属性P：其中若行为C满足P，那么任意 reduced behavior $C'\sqsubseteq C$满足P。当然，我们要给出什么是另外一个行为的reduced behavior的正式定义。例如，对于执行集合$C$和$C'$，我们可以定义$C'\sqsubseteq C$若“$C'$中的每条执行都是$C$中的一条执行的前缀”。另外一个可能性由执行树间的“仿真”概念提供[Mil89]。
+
+    \paragraph{Syntactic characterization 句法特征} 在用时序逻辑表达的某种案例P中，我们可以给出句法特征[Sis85, MP90, CMP92，, Sis94]。一个简洁的表述为：任意一个安全属性都可以写成形如$\text{\textbf{AG}}\phi^-$，其中$\phi^-$是过去时序公式（past temporal formula），即只用到了过去组合器（past combinators）（看下面）和常用的 布尔组合器（boolean combinators）以及原子命题。PLTL的公式$\text{\textbf{G}}\phi^-$是等价的。
+
+    特征暗含的原则如下：当一个安全属性被违背的时候，应该可以立刻检测出来。如果这个依赖于行为的后续，那么一个会立刻终止的行为不会违背这个安全属性。因此我们只需要在当前状态去注意它，利用之前出现过的事件（放宽条件来说：这里的过去包括当前）。
+
+    \paragraph{Temporal logic with past 包含过去的时序逻辑} $\text{CTL}^*$逻辑没有提供过去组合器。这个并不能妨碍$\text{CTL}^*$表达安全属性。它只是妨碍了给出一个简洁的安全属性概念的的特征。
+
+    这里先不给出过去组合器的正式定义（可以看[LS95]来知道）。过去组合器可以被描述为未来组合器的镜像。这样一来$\text{\textbf{F}}^{-1}\phi$和$\text{\textbf{X}}^{-1}\phi$意思为$\phi$在过去的某个时间点为真（对应$ \text{\textbf{F}}^{-1}$）或者在当前时间点的前一个状态（对应$\text{\textbf{X}}^{-1}$）。$\text{\textbf{S}}$是until，$\text{\textbf{U}}$的镜像。公式$\phi\text{\textbf{S}}\psi$意思为$\psi$在过去的某个时间点为真，并且从那时起，$\phi$一直为真。
+
+    过去时序逻辑很微妙的一个点是建立在可能行为树（tree of possible behaviors）的公式解释上。因此$\text{\textbf{F}}^{-1}\phi$并不是图中的一个祖状态，而是到达当前状态的执行中的初始部分遇到的状态。这就是我们为什么不用路径组合器$\text{\textbf{A}}$和$\text{\textbf{E}}$搭配过去组合器：当前状态的过去是固定了的，它是从初始状态开始到当前状态的一条路径。
+
+    \paragraph{$\text{\textbf{AG}}\phi^-$ in practice 实际中的$\text{\textbf{AG}}\phi^-$} 互斥可以写成$\text{\textbf{AG}}\neg(sc_1\wedge sc_2)$，事实上是一条安全性公式：没有未来组合器的子公式$\neg(sc_1\wedge sc_2)$是一个隐形的$\phi^-$。
+
+    让我们回到（7.1）属性的例子。它可以被写成形如：
+    \begin{equation}\label{}
+      \text{\textbf{AG}}(\text{\textbf{starts}}\Rightarrow \text{\textbf{F}}^{-1} \text{ key} )
+    \end{equation}
+    在$\text{\textbf{AG}}$的范围内只用了过去组合器（这里是$\text{\textbf{F}}^{-1}$）。这个公式读作“永远（$\text{\textbf{AG}}$）为真，如果汽车启动的话，那么（$\Rightarrow$）钥匙之前（$\text{\textbf{F}}^{-1}$）肯定被插入了”。因此它事实上是一个安全属性公式！
+
+    $\text{\textbf{AG}}\phi^-$形式的安全属性特征很清楚地说明了，如果$\psi_1$和$\psi_2$是安全性公式，那么它们的合取$\psi_1\wedge\psi_2$也是一条安全性公式，但是它们的析取$\psi_1\vee\psi_2$通常来说不是。例如$(\text{\textbf{AG}}P)\vee(\text{\textbf{AG}}Q)$等价于no公式$\text{\textbf{AG}}\phi^-$。
+
+    \paragraph{Safety properties and diagnostic 安全属性和诊断} 在$\text{\textbf{AG}}\phi^-$行驶中，特征有利解释模型检查器的诊断形式从而来对不满足的安全属性公式做出回应。
+
+    如果一个属性$\text{\textbf{AG}}\phi^-$没有被满足，那么存在一条从初始状态开始的有限路径会到达不希望的状况。这样的执行前缀是足够用来诊断的。它包含了所有需要观察$\phi^-$不为真的信息：因为$\phi^-$是一条过去公式，不需要知道后续的执行（可能是无限长的）怎样进行。
+
+    因此，即使安全属性没有给出明确的过去形式，$\text{\textbf{AG}}\phi^-$的特征也可以导出一个结果：总是存在一条有限的执行前缀来满足诊断的目的（当这个属性被违背了）。
+
+    \section{Safety Properties in Practice 实际中的安全属性}
+    在理想中，一个安全属性可以通过简单地提交到模型检查器中验证。在现实生活中，这样是困难重重的。
+
+    在这个小节，我们讨论几个在验证安全属性的时候遇到的一些实际问题，并且我们把这些问题作为描述一些方法的动机。所谓的abstraction method（抽象方法）依赖于特定的情境并在11章讲述。简单地注意下，abstraction method 是为了解决状态爆炸或者系统规模问题并且abstraction method可以和其它方法一起组合。
+
+    我们从最简单的情况降到最复杂的情况
+
+    \paragraph{A simple case: non-reachability 一个简单的案例：不可达性} 在实际中，许多安全属性都表达为了可达性的否定：“系统不能进入一个...状态”。
+
+    因此我们就面临着 $\neg\text{\textbf{EF}}(\dots)$，即$\text{\textbf{AG}}\phi^-$，其中$\phi^-$是一个局部属性。例如，$\neg(\text{\textbf{crit\_in}} _2\wedge\text{\textbf{crit\_in}}_2)$是一个没有过去或者现在时序组合器的公式，也叫做当前公式（present formula）。
+
+    这个是一个非常重要而且常见的特殊例子。理论上，它是最简单的案例之一，因为所有的东西都在第6章展示了。
+
+    \paragraph{Safety without past 不包含过去的安全性} 经常会有安全属性是不包含过去的形式。例如，在正式定义中， $\text{\textbf{A}}(\neg\text{\textbf{starts W key}})$（7.1）要比$ \text{\textbf{AG}}(\text{\textbf{starts}}\Rightarrow \text{\textbf{F}}^{-1} \text{ key} )$（7.3）遇到得多。
+
+    选（7.1）还是（7.3）呢？前者看起来对于模型检查器用户来说更自然。这是因为当前没有哪个模型检查器能够解决过去公式，所以几乎所有的时序逻辑表达（特别是所有的实际用途）都依赖于未来逻辑。这里的第2章也不例外。
+
+    然而，使用混合逻辑由两个优点：
+    \begin{itemize}
+      \item 混合逻辑可以允许以一种保证安全性的语法来写公式$\text{\textbf{AG}}\phi^-$。这样的保证在未来逻辑中是不明显的。从（7.1）和（7.2）的比较中就可以看出只有前者才是安全属性；
+      \item 混合逻辑提供了丰富的形式，更加适应倾向于自由混合过去和未来动词的自然语言转换。
+    \end{itemize}
+
+    对于不包含过去的安全性公式，第一个问题是它们的确认。一旦确认了，如果我们的模型检查器可以处理时序逻辑，这样的公式可以直接被解决了。否则，我们可以用7.4小节的历史变量方法（history variables method）。
+
+    \paragraph{Safety with explicit past 显性包含过去的安全性} 回想一下，当前（在我们认知中）没有模型检查器可以处理包含过去的时序公式。为了解决形如$\text{\textbf{AG}}\phi^-$的安全属性，由两种可能的解决办法：我们简短介绍的消除过去（eliminating the past）方法，和我们下个小节将的历史变量方法（history variables method）。
+
+    \paragraph{Eliminating the past 消除过去} 理论上，有可能把任意的结合了过去和未来的时序逻辑公式，翻译成等价的纯未来公式[LS95]。注意以下，在公式$\text{\textbf{AG}}\phi^-$的案例中，结果不必要是一个CTL公式。然而这些翻译被证明了是相当脆弱，并且在实际中，低效运行的点依赖于几个简单的模式，例如$\text{\textbf{AG}})(\dots\Rightarrow\text{\textbf{F}}^{-1})\dots$。因为这些等价式子一旦给出了，那么所有的都一样：
+    \begin{equation*}
+      \text{\textbf{AG}}(\phi\Rightarrow\text{\textbf{F}}^{-1}\psi)\equiv\text{\textbf{A}}(\neg(\phi\text{\textbf{W}}\psi))
+    \end{equation*}
+
+    \section{The History Variables Method 历史变量方法}
+
+    在实际中有可能将处理形如$\text{\textbf{AG}}\phi^-$的属性变成处理一个可达性。这是一个相当简单的过程，并且在任意案例中，当我们的工具不能处理时序逻辑时，这是唯一可用的行动方案。因此我们可以看到，依赖于一个可用的工具，一个显性包含过去的公式有它的有点。
+
+    将公式$\text{\textbf{AG}}\phi^-$翻译成可达性的方法取决于历史变量的使用。历史变量的目的时为了在不修改系统（未来）的行为基础上，储存一些（过去）事件的发生与否。然后这样的历史变量可以用可达性公式来表达 $\text{\textbf{AG}}\phi^-$ 。
+
+    \paragraph{An example 一个例子} 可以用一个简单的例子来说明构建过程。思考以下图7.1的自动机$\mathcal{A}$。
+    \begin{figure}
+        \centering
+        \includegraphics[width=3.0in,height=2.0in]{7_1.jpg}
+        \caption{$\mathcal{A}$, a model of an alarm}
+    \end{figure}
+
+    我们希望验证，每次 alarm（闹钟）响了，都必须有一个 crash 事先发生，用组合器$\text{\textbf{F}}^{-1}$表达为$\text{\textbf{AG}}(\text{\textbf{alarm}}\Rightarrow\text{\textbf{F}}^{-1}\text{\textbf{crash}})$。另外，我们希望验证每次alarm响了，从上次crash之后在没有reset发生过。这两个属性的结合可以用$\text{\textbf{S}}$组合器表达为：$\text{\textbf{AG}}(\text{\textbf{alarm}}\Rightarrow(\neg\text{\textbf{reset}})\text{\textbf{S crash}})$。
+
+    我们还希望验证每次闹钟发出声音之后都有一个crash跟着，用组合器$\text{\textbf{X}}^{-1}$（对应“直接父状态”）表达为$\text{\textbf{AG}}(\text{\textbf{alarm}}\Rightarrow\text{\textbf{X}}^{-1}\text{\textbf{crash}})$。这三个属性都是$\text{\textbf{AG}}\phi^-$的形式，因此都是安全属性。
+
+    通过引进历史变量有可能可以摆脱过去公式$\phi^-$。对于公式$\phi^-$，一个历史变量是一个布尔变量$\text{\textbf{h}}_ {\phi^-}$，其为真当且仅当$\phi^-$为真。因为$\phi^-$是过去公式，它有可能根据每次转换更新历史变量$\text{\textbf{h}}_ {\phi^-}$而不用知道后续的行为是怎样的。
+
+    在上述的例子中，我们需要两个变量：$\text{\textbf{h1}}$对应公式$\text{\textbf{X}}^{-1}\text{\textbf{crash}}$（记为$\phi_1^-$）和$\text{\textbf{h2}}$对应$(\neg\text{\textbf{reset}})\text{\textbf{S crash}}$（记为$\phi_2^-$）。我们会修改图7.1的自动机来包含$\text{\textbf{X}} ^{-1}\text{\textbf{h1}}$和$\text{\textbf{h2}}$，其中两者必须正确表示$\phi_1^-$和$\phi_2^-$的值。
+
+    对于$\text{\textbf{X}} ^{-1}\text{\textbf{crash}}$，更新很简单： $\text{\textbf{h1}}$初始为假。然后从$q$到$q'$的一个转换赋值$\text{\textbf{h1}}$为真当且仅当$q$满足$\text{\textbf{crash}}$，即$q$是$\text{\textbf{crash}}$状态。
+
+    对于$\text{\textbf{h2}}$，策略也是相似的。这里$\phi_2^-$是$(\neg\text{\textbf{reset}})\text{\textbf{S crash}}$。我们设$\text{\textbf{h2}}$初始为假。每一个到达$\text{\textbf{crash}}$状态的转换都会设$\text{\textbf{h2}}$为真。如果其它的转换到达$\text{\textbf{reset}}$状态，它们设$\text{\textbf{h2}}$为假。否则，变量的值不变。这些引出了图7.2的自动机。
+    \begin{figure}
+        \centering
+        \includegraphics[width=5.0in, height=3.0in]{7_2.jpg}
+        \caption{$\mathcal{A}_{+\text{hist}}$, the automaton $\mathcal{A}$ enriched with its history variables}
+    \end{figure}
+
+    生成的自动机$\mathcal{A}_{+\text{hist}}$有着和$\mathcal{A}$同样的行为（并且它也因此满足同样的时序逻辑公式），但增加两个如下变量：
+    \begin{equation*}
+      \text{\textbf{AG}}(\text{\textbf{h1}}\Leftrightarrow\text{\textbf{X}}^{-1}\text{\textbf{crash}})\text{ and }\text{\textbf{AG}}(\text{\textbf{h2}}\Leftrightarrow(\neg\text{\textbf{reset}})\text{\textbf{S crash}})
+    \end{equation*}
+    我们因此将形如“是否$\mathcal{A}\models\text{\textbf{AG}}(\text{\textbf{alarm}}\Rightarrow\text{\textbf{X}} ^{-1}\text{\textbf{crash}})$”的问题变成一个不包含过去的模型检查问题“是否$\mathcal{A}_{+\text{hist}}\models\text{\textbf{AG}}(\text{\textbf{alarm}}\Rightarrow\text{\textbf{h1}})$”。这可以被像SMV的工具处理。
+
+    \paragraph{The general case 普遍的情况} 上述建议的构建过程可以推广起来。它可以为每一个根是过去组合器的子公式引入历史变量。思考一个例子，对于公式$\text{\textbf{F}}^{-1}((\text{\textbf{X}}^{-1}P)\text{\textbf{S}}Q)$，
+    我们引入$\text{\textbf{h1}}$对应$\text{\textbf{X}}^{-1}P$，然后$\text{\textbf{h2}}$对应$\text{\textbf{h1 S }}Q$，接着$\text{\textbf{h3}}$对应$\text{\textbf{F}}^{-1}\text{\textbf{h2}}$。这三个变量初始为假并且用图7。2所讲的技术来更新。记住$\text{\textbf{F}}^{-1}$是$\text{\textbf{S}}$的一个特殊情况并且$\text{\textbf{G}}^{-1}$对偶于$\text{\textbf{F}}^{-1}$。
+
+    注意一下，历史变量方法总是会导致（否定）可达性问题。因此，这个技术证明了当我们的工具只能处理可达性的时候，这个方法有利于检查不包含过去的安全性公式。
+
+    更一般地说，历史变量方法可以看作是一种特殊（并且简化）的观察自动机的方法。通过和第二个方法进行比较，实际中的历史变量方法的巨大优势在于，需要的修改步骤不仅容易理解而且容易判断。
+
+    \paragraph{Complexity 复杂度} 因为每一个布尔变量的引入都会使得未展开的自动机状态数量翻倍。如果过去公式的大小不限制，历史变量方法会导致组合爆炸。相应地，拥有丰富的过去组合器的CTL模型检查技术是PSPACE-complete。（PSPACE-完备？）。
 \end{document} 
